@@ -1,0 +1,499 @@
+<!doctype html><html lang=fr>
+<head><title>Typescript Refactoring &ndash; Sébastien Traber</title>
+<meta name=description content="Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta charset=utf-8>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css integrity="sha512-b1ASx0WHgVFL5ZQhTgiPWX+68KjS38Jk87jg7pe+qC7q9YkEtFq0z7xCglv7qGIs/68d3mAp+StfC8WKC5SSAg==" crossorigin=anonymous>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/palettes/base16-dark.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/risotto.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/custom.css>
+</head>
+<body>
+<div class=page>
+<header class=page__header><h1 class=page__logo><a href=https://shammas44.github.io/labveilltech/ class=page__logo-inner>Sébastien Traber</a></h1>
+<nav class="page__nav main-nav">
+<ul>
+<li class=main-nav__item><a class="nav-main-item active" href=https://shammas44.github.io/labveilltech/post/ title=Posts>Posts</a></li>
+</ul>
+</nav>
+</header>
+<section class=page__body>
+<header class=content__header>
+<h1>Typescript Refactoring</h1>
+</header>
+<div class=content__body>
+<p>Le refactoring est un processus qui consiste à améliorer la structure et la qualité du code sans altérer son comportement.</p>
+<p>Il peut s&rsquo;agir de simplifier une logique complexe, de rendre le code plus lisible ou de corriger les erreurs de programmation.</p>
+<p>Dans ce contexte, Typescript est un super outil pour refactorer son code. Typescript est un sur-ensemble de JavaScript qui ajoute des fonctionnalités telles que la typification et les classes pour améliorer la qualité du code.
+Cela permet de détecter les erreurs de compilation à un stade précoce et de faciliter la maintenance du code.</p>
+<p>Dans cet article, nous allons explorer quelques techniques de refactoring disponibles dans Typescript issue du livre Refactoring TypeScript aux éditions packt</p>
+<h1 id=1-avoid-null-check-everywhere>1. Avoid Null check everywhere</h1>
+<h2 id=empty-collections>Empty Collections</h2>
+<p>Afin d&rsquo;éviter d&rsquo;avoir à vérifier si une collection n&rsquo;est pas null, on peut lui assigner une valeur par défaut au moyen de la syntaxe suivante: <code>const x = condition || []</code></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// ❌ wrong 
+</span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>legalCases</span>: <span style=color:#66d9ef>LegalCase</span>[] <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>fetchCasesFromApi</span>()
+<span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>legalCase</span> <span style=color:#66d9ef>of</span> <span style=color:#a6e22e>legalCases</span>){
+    <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>legalCase</span>.<span style=color:#a6e22e>documents</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span>){
+        <span style=color:#a6e22e>uploadDocuents</span>(<span style=color:#a6e22e>lealCase</span>.<span style=color:#a6e22e>documents</span>)
+    }
+}
+
+<span style=color:#75715e>// ✅ correct
+</span><span style=color:#75715e></span><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>fetchCasesFromApi</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>async</span> <span style=color:#66d9ef>function</span>(){
+    <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>legalCases</span>: <span style=color:#66d9ef>LegalCase</span>[] <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>fetch</span>(<span style=color:#a6e22e>url</span>) <span style=color:#f92672>||</span> []
+    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>legalCase</span> <span style=color:#66d9ef>of</span> <span style=color:#a6e22e>legalCases</span>){
+        <span style=color:#a6e22e>legalCase</span>.<span style=color:#a6e22e>documents</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>legalCase</span>.<span style=color:#a6e22e>documents</span> <span style=color:#f92672>||</span> []
+    }
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>legalCases</span>
+}
+</code></pre></div><p>📚 Dans certains cas, au cas du typage, il n&rsquo;est pas permis d&rsquo;assigner un tableau vide comme valeur à une collection. On peut alors utiliser l&rsquo;astuce suivante.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>EmptyArray</span>&lt;<span style=color:#f92672>T</span>&gt;{
+    <span style=color:#66d9ef>static</span> <span style=color:#a6e22e>create</span>&lt;<span style=color:#f92672>T</span>&gt;(){
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>new</span> Array&lt;<span style=color:#f92672>T</span>&gt;() 
+    }
+}
+</code></pre></div><h2 id=empty-object>Empty Object</h2>
+<p>Dans le cas suivant on considère un jeu vidéo comportant des niveaux, dont certains, contiennent un boss. Comment vérifier que le niveau courant contient un boss ?</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// ❌ wrong
+</span><span style=color:#75715e></span><span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>currentLevel</span>.<span style=color:#a6e22e>boss</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span>){
+    <span style=color:#a6e22e>currentLevel</span>.<span style=color:#a6e22e>boss</span>.<span style=color:#a6e22e>fight</span>(<span style=color:#a6e22e>player</span>) 
+}
+
+...
+
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>currentLevel</span>.<span style=color:#a6e22e>boss</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span>){
+    <span style=color:#a6e22e>currentLevel</span>.<span style=color:#a6e22e>completed</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>currentLevel</span>.<span style=color:#a6e22e>boss</span>.<span style=color:#a6e22e>isDead</span>()
+}
+</code></pre></div><p>L&rsquo;exemple suivant consiste à créer un objet représentant un <strong>boss null</strong> de sorte que ce dernier fasse automatiquement gagner le joueur lorsque celui-ci est rencontré. Il n&rsquo;est ainsi plus nécessaire de vérifier que le boss est <strong>non null</strong> qu&rsquo;il soit instance de <code>Boss</code> ou <code>NullBoss</code></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#75715e>// ✅ correct
+</span><span style=color:#75715e></span><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>Boss</span> {
+    <span style=color:#a6e22e>fight</span>(<span style=color:#a6e22e>player</span>:<span style=color:#66d9ef>Player</span>);
+    <span style=color:#a6e22e>isDead</span>();
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Boss</span> <span style=color:#66d9ef>implements</span> <span style=color:#a6e22e>Boss</span> {
+    <span style=color:#a6e22e>fight</span>(<span style=color:#a6e22e>player</span>:<span style=color:#66d9ef>Player</span>){
+        <span style=color:#75715e>// do some logic and return boolean 
+</span><span style=color:#75715e></span>    }
+    
+    <span style=color:#a6e22e>isDead</span>(){
+        <span style=color:#75715e>// Return whether boss is dead depending on how fight went 
+</span><span style=color:#75715e></span>    }
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>NullBoss</span> <span style=color:#66d9ef>implements</span> <span style=color:#a6e22e>Boss</span> {
+    <span style=color:#a6e22e>fight</span>(<span style=color:#a6e22e>player</span>:<span style=color:#66d9ef>Player</span>){
+        <span style=color:#75715e>// player always wins
+</span><span style=color:#75715e></span>    }
+    
+    <span style=color:#a6e22e>isDead</span>(){
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span>
+    }
+}
+</code></pre></div><h2 id=special-case-pattern>Special Case Pattern</h2>
+<p>Dans le cas du placement d&rsquo;un ordre, ce dernier pourrait avoir plusieurs statuts qui nécessitent chacun un traitement différent.</p>
+<p><strong>❌ Exemple incorrect</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>status</span> <span style=color:#f92672>===</span> <span style=color:#a6e22e>OrderStatus</span>.<span style=color:#a6e22e>Pending</span>) {}
+<span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>status</span> <span style=color:#f92672>===</span> <span style=color:#a6e22e>OrderStatus</span>.<span style=color:#a6e22e>Canceled</span>) {}
+<span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>status</span> <span style=color:#f92672>===</span> <span style=color:#a6e22e>OrderStatus</span>.<span style=color:#a6e22e>Terminated</span>) {}
+<span style=color:#66d9ef>else</span> {}
+</code></pre></div><p>Afin d&rsquo;éviter la situation précédente, on peut créer une version différente de la classe Order pour chaque Status.</p>
+<p><strong>✅ Exemple correct</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript>
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PendingOrder</span> <span style=color:#66d9ef>implements</span> <span style=color:#a6e22e>Order</span> {
+    <span style=color:#66d9ef>constructor</span>(){}
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>placeOrder</span>(){
+        <span style=color:#75715e>// API call
+</span><span style=color:#75715e></span>    }
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PaymentRejectedOrder</span> <span style=color:#66d9ef>implements</span> <span style=color:#a6e22e>Order</span> {
+    <span style=color:#66d9ef>constructor</span>(){}
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>placeOrder</span>(){
+        <span style=color:#75715e>// Try to pay again 
+</span><span style=color:#75715e></span>    }
+}
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>OrderOnFraudulentAccount</span> <span style=color:#66d9ef>implements</span> <span style=color:#a6e22e>Order</span> {
+    <span style=color:#66d9ef>constructor</span>(){}
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>placeOrder</span>(){
+        <span style=color:#75715e>// Notify the fraud departmment
+</span><span style=color:#75715e></span>    }
+}
+</code></pre></div><p>Quelque part dans le code, nous aurions une fonction qui créer une instance pour chaque ordre nécessitant d&rsquo;être placé. puis chaque ordre sera traité différemment au moyen de leur méthode respective <code>placeOrder</code></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>ordersCollection</span>: <span style=color:#66d9ef>Order</span>[] <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>getOrders</span>();
+<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>order</span> <span style=color:#66d9ef>of</span> <span style=color:#a6e22e>ordersCollection</span>){
+    <span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>placeOrder</span>()
+}
+</code></pre></div><h1 id=2-wordy-conditionals>2. Wordy conditionals</h1>
+<p>l&rsquo;astuce suivante permet d&rsquo;éviter d&rsquo;écrire des conditions trop complexes, imbriquant plusieurs conditions telles que : <code>if(x && y && z){}</code></p>
+<h2 id=combining-conditions>Combining conditions</h2>
+<p><strong>❌ Exemple incorrect</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>role</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;admin&#34;</span> 
+<span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>active</span>
+<span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>permissions</span>.<span style=color:#a6e22e>some</span>(<span style=color:#a6e22e>p</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>p</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;edit&#34;</span>)){
+    <span style=color:#75715e>// do stuff
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>On peut faciliter la lecture en attribuant les conditions à des variables puis en regroupant toutes les conditions sous une seule variable avec un nom suffisamment descriptif.</p>
+<p>📚 De manière générale, on peut faire en sorte que les <code>if statement</code> se réfère à une seule condition. S’il faut vérifier de multiples variables, on peut se permettre de les combiner en une seule variable portant un nom semantic clair.</p>
+<p><strong>✅ Exemple correct</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>isAdmin</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>role</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;admin&#34;</span>;
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>userIsActive</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>active</span>;
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>userCanEdit</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>permissions</span>.<span style=color:#a6e22e>some</span>(<span style=color:#a6e22e>p</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>p</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;edit&#34;</span>);
+
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>activeAdminCanEdit</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>isAdmin</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>userIsActive</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>userCanEdit</span>;
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>activeAdminCanEdit</span>){
+    <span style=color:#75715e>// do stuff
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=extract-methods-from-conditions>Extract methods from conditions</h2>
+<p>Dans l&rsquo;exemple précédent, toutes les conditions se réfèrent à un seul entité, <strong>l&rsquo;utilisateur</strong>, dans ce genre de situation, on peut extraire les conditions et les implémenter directement comme méthode à la classe <code>User</code></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>activeAdminCanEdit</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isAdmin</span>() 
+    <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isActive</span>()
+    <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>canEdit</span>();
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>activeAdminCanEdit</span>){
+    <span style=color:#75715e>// do stuff
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=srp>SRP</h2>
+<p>Si le nombre de méthodes servant à vérifier une condition devient trop important dans une classe, on peut envisager de créer un class à part pour ce besoin selon le <strong>Single Responsability Principle</strong></p>
+<p><strong>SRP class</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UserIsActiveAdmin</span> {
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>_user</span>: <span style=color:#66d9ef>User</span>;
+    
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>user</span>:<span style=color:#66d9ef>User</span>){
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_user</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>user</span>; 
+    }
+    
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>invoke</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>boolean</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_user</span>.<span style=color:#a6e22e>isAdmin</span>() <span style=color:#f92672>&amp;&amp;</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_user</span>.<span style=color:#a6e22e>isActive</span>() 
+    }
+}
+</code></pre></div><p><strong>SRP object usage</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>activeAdminCanEdit</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserIsActiveAdmin</span>(<span style=color:#a6e22e>user</span>).<span style=color:#a6e22e>invoke</span>() <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>canEdit</span>();
+
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>activeAdminCanEdit</span>){
+    <span style=color:#75715e>// do stuff
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=pipe-classes>Pipe Classes</h2>
+<p>Si on applique le conseil précédent dans un cas qui nécessite de nombreuses conditions, on risque de se retrouver avec de nom de class très long et incompréhensible tels que <code>CheckOneCheckTwoCheckThreeCheckFour...</code> c&rsquo;est pourquoi dans l&rsquo;exemple suivant on va se limiter à vérifier <em>1 à 2</em> conditions.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>PipeableCondition</span> {
+    <span style=color:#a6e22e>check</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>boolean</span>;
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UserIsActiveAdmin</span> <span style=color:#66d9ef>implements</span> <span style=color:#a6e22e>PipeableCondition</span> {
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>_user</span>: <span style=color:#66d9ef>User</span>;
+    
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>user</span>: <span style=color:#66d9ef>User</span>){
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_user</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>user</span>; 
+    }
+    
+    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>check</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>boolean</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_user</span>.<span style=color:#a6e22e>isAdmin</span>() <span style=color:#f92672>&amp;&amp;</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_user</span>.<span style=color:#a6e22e>isActive</span>();
+    }
+}
+</code></pre></div><p>Si on dispose de nombre de ces conditions, on peut les combiner ensemble dans une collection et itérer dessus pour vérifier que toutes les conditions passent.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>conditions</span>: <span style=color:#66d9ef>PipeableConditon</span>[] <span style=color:#f92672>=</span> [
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserIsActiveAdmin</span>(<span style=color:#a6e22e>user</span>),
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserCanEdit</span>(<span style=color:#a6e22e>user</span>),
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserIsNotBlacklisted</span>(<span style=color:#a6e22e>user</span>),
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserLivesInAvailableLocation</span>(<span style=color:#a6e22e>user</span>)
+];
+
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>valid</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>conditions</span>.<span style=color:#a6e22e>every</span>(<span style=color:#a6e22e>p</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>check</span>());
+
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>valid</span>){
+    <span style=color:#75715e>// do stuff
+</span><span style=color:#75715e></span>}
+</code></pre></div><h2 id=global-pipe-class>Global Pipe Class</h2>
+<p>Si nous voulant utiliser l&rsquo;exemple précédant partout dans le code il faut préparer une classe à cette intention.</p>
+<p><strong>Declaratin de la classe ConditionsPipe</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ConditionsPipe</span> {
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>_conditions</span>: <span style=color:#66d9ef>PipeableCondition</span>[];
+    
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>conditions</span>: <span style=color:#66d9ef>PipeableCondition</span>[]){
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_conditions</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>conditions</span>; 
+    }
+    
+    <span style=color:#a6e22e>check</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>boolean</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_conditions</span>.<span style=color:#a6e22e>every</span>(<span style=color:#a6e22e>p</span> <span style=color:#f92672>=&gt;</span> <span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>check</span>()); 
+    }
+}
+</code></pre></div><p><strong>Utilisation de la classe ConditionsPipe</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>pipe</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>CondtionsPipe</span>([
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserIsActiveAdmin</span>(<span style=color:#a6e22e>user</span>),
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserCanEdit</span>(<span style=color:#a6e22e>user</span>),
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserIsNotBlacklisted</span>(<span style=color:#a6e22e>user</span>),
+    <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>UserLivesInAvailableLocation</span>(<span style=color:#a6e22e>user</span>)
+])
+
+<span style=color:#66d9ef>if</span> (<span style=color:#a6e22e>pipe</span>.<span style=color:#a6e22e>check</span>()){
+    <span style=color:#75715e>// do stuff
+</span><span style=color:#75715e></span>}
+</code></pre></div><h1 id=3-nested-conditionals>3. Nested Conditionals</h1>
+<p>Afin d&rsquo;éviter d&rsquo;avoir des conditions en cascades, rendant le code difficile à lire et à maintenir, on peut utiliser les conseils suivants</p>
+<h2 id=fail-fast>Fail Fast</h2>
+<p>Le but et de faire échouer les tests le plus vites possible, pour ce faire on va notamment non pas vérifier si les conditions sont remplies, mais plutôt si elles ne le sont pas.</p>
+<p><strong>❌ Exemple incorrect</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>let</span> <span style=color:#a6e22e>result</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>null</span>;
+ 
+<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span><span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>wasCancelled</span>()){
+    <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>isPaid</span>()){
+        <span style=color:#a6e22e>result</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>sendToShipping</span>(); 
+    }<span style=color:#66d9ef>else</span> {
+        <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>isFraudulent</span>()){
+            <span style=color:#a6e22e>result</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>sendToFraudDept</span>();
+        }<span style=color:#66d9ef>else</span>{
+            <span style=color:#a6e22e>result</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>tryAgainLater</span>(); 
+        }
+    }
+}
+<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>;
+</code></pre></div><p><strong>✅ Exemple correct</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>wasCancelled</span>()){
+    <span style=color:#66d9ef>return</span>; 
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>wasPaid</span>()){
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>sendToShipping</span>();
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>wasCancelled</span>()){
+    <span style=color:#66d9ef>return</span>;
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>wasPaid</span>()){
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>sendToShipping</span>();
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>isFraudulent</span>()){
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>sendToFraudDept</span>();
+}
+<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>order</span>.<span style=color:#a6e22e>tryAgainLater</span>();
+</code></pre></div><h2 id=gate-class>Gate class</h2>
+<p>Ce pattern est utilisé lorsqu’on veut que&rsquo;une partie d&rsquo;une fonction de soit exécuté qui si elle remplit des conditions précises.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>accountIsVerified</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>accountRepo</span>.<span style=color:#a6e22e>accountIsVerified</span>(<span style=color:#a6e22e>userAccount</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>canPlaceOrder</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>orderRepo</span>.<span style=color:#a6e22e>userCanPlaceOrder</span>(<span style=color:#a6e22e>user</span>);
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>accountIsVerified</span>){
+    <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>canPlaceOrder</span>){
+        <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>orderRepo</span>.<span style=color:#a6e22e>placeOrder</span>(<span style=color:#a6e22e>order</span>);
+    }
+}
+</code></pre></div><p>Imaginons que dans l&rsquo;exemple précédent nous ayons besoin que ce code soit utilisé à de multiples endroits dans l&rsquo;application. Comment faire pour réaliser ces vérifications de manière plus explicite, partageable et facilement maintenable. la solution consiste à créer une <code>Gate</code></p>
+<p>On peut créer une <code>Gate</code> en extrayant chacune des conditions dans une nouvelle classe. ces classes lanceront une exception en cas d&rsquo;échec</p>
+<p><strong>Exemple de Gate</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>AccountIsVerifiedGate</span> {
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>_accountRepo</span>: <span style=color:#66d9ef>AccountRepo</span>;
+    
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>accountRepo</span>: <span style=color:#66d9ef>AccountRepo</span>){
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_accountRepo</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>accountRepo</span>; 
+    }
+    
+    <span style=color:#66d9ef>async</span> <span style=color:#a6e22e>invoke</span>(<span style=color:#a6e22e>account</span>: <span style=color:#66d9ef>UserAccount</span>){
+        <span style=color:#66d9ef>const</span> <span style=color:#a6e22e>isVerified</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_accountRepo</span>.<span style=color:#a6e22e>accountIsVerified</span>(<span style=color:#a6e22e>account</span>);
+        
+        <span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span><span style=color:#a6e22e>isVerified</span>){
+            <span style=color:#66d9ef>throw</span> <span style=color:#e6db74>&#34;Gate exception&#34;</span>; 
+        }
+    }
+}
+</code></pre></div><p><strong>Utilisation des Gates dans le code</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>await</span> <span style=color:#a6e22e>accountIsVerifiedGate</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#a6e22e>userAccount</span>);
+<span style=color:#66d9ef>await</span> <span style=color:#a6e22e>userCanPlaceOrderGate</span>.<span style=color:#a6e22e>invoke</span>(<span style=color:#a6e22e>user</span>);
+<span style=color:#66d9ef>await</span> <span style=color:#a6e22e>orderRepo</span>.<span style=color:#a6e22e>placeOrder</span>(<span style=color:#a6e22e>order</span>);
+</code></pre></div><p>Si un des tests échoue, la gate associée lance une exception. Il ne manquerait ainsi plus qu’à traiter les éventuelles exceptions.</p>
+<p>📚 Ce genre de pattern peut se révéler très utile en ce qui consiste les appels à une API.</p>
+<h1 id=4-primitive-overuse>4. Primitive Overuse</h1>
+<p><strong>Exemple à améliorer</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>domain</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>email</span>.<span style=color:#a6e22e>replace</span>(<span style=color:#e6db74>/.*@/</span>,<span style=color:#e6db74>&#34;&#34;</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>userName</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>email</span>.<span style=color:#a6e22e>replace</span>(<span style=color:#a6e22e>domain</span>, <span style=color:#e6db74>&#34;&#34;</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>sendInternal</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>domain</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;internal-compagny.com&#34;</span>;
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>sendInternal</span>){
+    <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>userName</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;info&#34;</span>){
+        <span style=color:#a6e22e>mail</span>.<span style=color:#a6e22e>sendToCustomerServiceTeam</span>(<span style=color:#a6e22e>email</span>, <span style=color:#a6e22e>message</span>); 
+    }<span style=color:#66d9ef>else</span>{
+        <span style=color:#a6e22e>mailer</span>.<span style=color:#a6e22e>mailToInternalServer</span>(<span style=color:#a6e22e>email</span>,<span style=color:#a6e22e>message</span>); 
+    }
+}<span style=color:#66d9ef>else</span>{
+    <span style=color:#66d9ef>throw</span> <span style=color:#e6db74>&#34;Cannot email externally&#34;</span>;
+}
+</code></pre></div><p><strong>Amélioration 1</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>domain</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>email</span>.<span style=color:#a6e22e>replace</span>(<span style=color:#e6db74>/.*@/</span>,<span style=color:#e6db74>&#34;&#34;</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>userName</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>email</span>.<span style=color:#a6e22e>replace</span>(<span style=color:#a6e22e>domain</span>, <span style=color:#e6db74>&#34;&#34;</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>sendInternal</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>domain</span> <span style=color:#f92672>!==</span> <span style=color:#e6db74>&#34;internal-compagny.com&#34;</span>;
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>sendExternal</span>){
+    <span style=color:#66d9ef>throw</span> <span style=color:#e6db74>&#34;Cannot email externally&#34;</span>;
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>userName</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;info&#34;</span>){
+    <span style=color:#a6e22e>mailer</span>.<span style=color:#a6e22e>sendToCustomerServiceTeam</span>(<span style=color:#a6e22e>email</span>,<span style=color:#a6e22e>message</span>);
+    <span style=color:#66d9ef>return</span>;
+}
+<span style=color:#a6e22e>mailer</span>.<span style=color:#a6e22e>mailToInternalServer</span>(<span style=color:#a6e22e>email</span>, <span style=color:#a6e22e>message</span>);
+</code></pre></div><p>Cependant on peut encore améliorer les conditions. Le principal souci est qu&rsquo;il n&rsquo;existe pas de concept d&rsquo;adresse mail, pour y remédier, on peut créer une classe. <code>EmailAddress</code></p>
+<p>Dans le code précédant nous nous sommes focalisé sur la variable <code>string</code> contenant l&rsquo;adresse mail d&rsquo;ou émane toute la logique. À la place, on pourrait encapsuler ce concept et sa logique dans un nouvel objet.</p>
+<p><strong>Create a value object</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>EmailAddress</span> {
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>_value</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>_domain</span>: <span style=color:#66d9ef>string</span>;
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>_userName</span>: <span style=color:#66d9ef>string</span>;
+    
+    <span style=color:#66d9ef>constructor</span>(<span style=color:#a6e22e>value</span>: <span style=color:#66d9ef>string</span>){
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_value</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>value</span>; 
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_domain</span>: <span style=color:#66d9ef>string</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>value</span>.<span style=color:#a6e22e>replace</span>(<span style=color:#e6db74>/.*@/</span>,<span style=color:#e6db74>&#34;&#34;</span>);
+        <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_userName</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>value</span>.<span style=color:#a6e22e>replace</span>(<span style=color:#a6e22e>domain</span>, <span style=color:#e6db74>&#34;&#34;</span>);
+        <span style=color:#66d9ef>if</span>(<span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>isExternal</span>(<span style=color:#a6e22e>value</span>){
+            <span style=color:#66d9ef>throw</span> <span style=color:#e6db74>&#34;Cannot email externally&#34;</span>;
+        }
+    }
+    
+    <span style=color:#a6e22e>isExternal</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>boolean</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_domain</span> <span style=color:#f92672>!==</span> <span style=color:#e6db74>&#34;internal-company.com&#34;</span>; 
+    }
+    
+    <span style=color:#a6e22e>isInfoUser</span>()<span style=color:#f92672>:</span> <span style=color:#66d9ef>boolean</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_userName</span> <span style=color:#f92672>===</span> <span style=color:#e6db74>&#34;info&#34;</span>; 
+    }
+    
+    <span style=color:#a6e22e>value</span>(){
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>_value</span>; 
+    }
+}
+</code></pre></div><p>📚 les <code>value object</code> ne doivent pas êtres modifié une fois instancié, on n&rsquo;expose que les méthodes <code>read-only</code>qui donnent au reste de l&rsquo;application des informations sur l&rsquo;adresse mail.</p>
+<p><strong>Utilisation du value object</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>try</span> {
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>emailAddress</span>: <span style=color:#66d9ef>EmailAddress</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#a6e22e>EmailAddress</span>(<span style=color:#a6e22e>email</span>);
+<span style=color:#a6e22e>doEmailLogic</span>(<span style=color:#a6e22e>emailAddress</span>);
+}<span style=color:#66d9ef>catch</span>(<span style=color:#a6e22e>Exception</span> <span style=color:#a6e22e>e</span>){
+    <span style=color:#75715e>// Do stuff
+</span><span style=color:#75715e></span>}
+
+<span style=color:#66d9ef>function</span> <span style=color:#a6e22e>doEmailLogic</span>(<span style=color:#a6e22e>emailAddress</span>: <span style=color:#66d9ef>EmailAddress</span>)<span style=color:#f92672>:</span><span style=color:#66d9ef>void</span> {
+    <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>emailAddress</span>.<span style=color:#a6e22e>isInfoUser</span>()){
+        <span style=color:#a6e22e>mailer</span>.<span style=color:#a6e22e>sendToCustomerServiceTeam</span>(<span style=color:#a6e22e>emailAddress</span>.<span style=color:#a6e22e>value</span>(), <span style=color:#a6e22e>message</span>);
+        <span style=color:#66d9ef>return</span>;
+    }
+    <span style=color:#a6e22e>mailer</span>.<span style=color:#a6e22e>mailToInternalServer</span>(<span style=color:#a6e22e>emailAddress</span>.<span style=color:#a6e22e>value</span>(), <span style=color:#a6e22e>message</span>);
+}
+</code></pre></div><h2 id=deceptive-booleans>Deceptive Booleans</h2>
+<p><strong>❌ Exemple incorrect</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>user</span>: <span style=color:#66d9ef>User</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>userIsAuthenticated</span>(<span style=color:#a6e22e>username</span>, <span style=color:#a6e22e>password</span>);
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>isAuthenticated</span>: <span style=color:#66d9ef>boolean</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>user</span><span style=color:#f92672>!</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>null</span>;
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>isAuthenticated</span>){
+    <span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isActive</span>){
+        <span style=color:#a6e22e>redirectToUserDashboard</span>(); 
+    }<span style=color:#66d9ef>else</span>{
+        <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;User is not active&#34;</span>); 
+    }
+}<span style=color:#66d9ef>else</span>{
+    <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;Credentials are not valid.&#34;</span>)
+}
+</code></pre></div><p><strong>✅ Exemple correct</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>user</span>: <span style=color:#66d9ef>User</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>userIsAuthenticated</span>(<span style=color:#a6e22e>username</span>, <span style=color:#a6e22e>password</span>);
+<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span><span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isAuthenticatd</span>()){
+    <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;Credentials are not valid.&#34;</span>)
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span><span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isActive</span>()){
+    <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;User is not active&#34;</span>); 
+}
+<span style=color:#a6e22e>redirectToUserDashboard</span>();
+</code></pre></div><p><strong>Implémenter les fonctionnalités suivantes:</strong></p>
+<ul>
+<li>Si la session utilisateur existe déjà, rediriger l&rsquo;utilisateur sur une page home spéciale.</li>
+<li>Si l&rsquo;utilisateur a bloqué son compte dû à trop de tentatives de connexion, rediriger l&rsquo;utilisateur sur une page spéciale.</li>
+<li>S’il s&rsquo;agit de la première connexion de l&rsquo;utilisateur, rediriger l&rsquo;utilisateur vers une page de bienvenue.</li>
+</ul>
+<p><strong>❌ Exemple incorrect</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span><span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isAuthenticated</span>()){
+<span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;Credentials are not valid.&#34;</span>);
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span><span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isActive</span>()){
+    <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;User is not active&#34;</span>);
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>alreadyHadSession</span>()){
+    <span style=color:#a6e22e>redirectToHomePage</span>();
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isLockedOut</span>()){
+    <span style=color:#a6e22e>redirectToUserLockedOutPage</span>();
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>user</span>.<span style=color:#a6e22e>isFirstLogin</span>()){
+    <span style=color:#a6e22e>redirectToWelcomePage</span>();
+}
+<span style=color:#a6e22e>redirectToUserDashboard</span>();
+</code></pre></div><p>📚 Ce code est très lisible, mais à mesure que nous rajoutions des conditions nous surchargeons la classe <code>user</code> avec de la logique propre à l&rsquo;authentification. on peut l&rsquo;améliorer avec un <code>enum</code></p>
+<p><strong>✅ Exemple correct</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>enum</span> <span style=color:#a6e22e>AuthentificationResult</span> {
+    <span style=color:#a6e22e>InvalidCredentials</span>,
+    <span style=color:#a6e22e>UserIsNotActive</span>,
+    <span style=color:#a6e22e>HasExistingSession</span>,
+    <span style=color:#a6e22e>IsLockedOut</span>,
+    <span style=color:#a6e22e>IsFirstLogin</span>,
+    <span style=color:#a6e22e>Successful</span>
+}
+
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>result</span>: <span style=color:#66d9ef>AuthentificationResult</span> <span style=color:#f92672>=</span> <span style=color:#66d9ef>await</span> <span style=color:#a6e22e>tryAuthentificateUser</span>(<span style=color:#a6e22e>username</span>, <span style=color:#a6e22e>password</span>);
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>result</span> <span style=color:#f92672>===</span> <span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>InvalidCredentials</span>){
+    <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;Credentials are not valid&#34;</span>);
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>result</span> <span style=color:#f92672>===</span> <span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>UserIsNotActive</span>){
+    <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;User is not active&#34;</span>);
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>result</span> <span style=color:#f92672>===</span> <span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>HasExistingSession</span>){
+    <span style=color:#a6e22e>redirectToHomePage</span>();
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>result</span> <span style=color:#f92672>===</span> <span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>IsLockedOut</span>){
+    <span style=color:#a6e22e>redirectToUserLockedOutPage</span>();
+}
+<span style=color:#66d9ef>if</span>(<span style=color:#a6e22e>result</span> <span style=color:#f92672>===</span> <span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>isFirstLogin</span>){
+    <span style=color:#a6e22e>redirectToWelcomePage</span>();
+}
+<span style=color:#a6e22e>redirectToUserDashboard</span>();
+</code></pre></div><h2 id=strategy-pattern>Strategy Pattern</h2>
+<p>Ce bout de code est une amélioration du code précédent</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-typescript data-lang=typescript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>strategies</span>: <span style=color:#66d9ef>any</span> <span style=color:#f92672>=</span> [];
+<span style=color:#a6e22e>strategies</span>[<span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>InvalidCredentials</span>] <span style=color:#f92672>=</span> () <span style=color:#f92672>=&gt;</span> {
+    <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;Credentials are not valid&#34;</span>);
+}
+<span style=color:#a6e22e>strategies</span>[<span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>UserIsNotActive</span>] <span style=color:#f92672>=</span> () <span style=color:#f92672>=&gt;</span> {
+    <span style=color:#a6e22e>returnErrorOnLoginPage</span>(<span style=color:#e6db74>&#34;User is not active&#34;</span>);
+}
+<span style=color:#a6e22e>strategies</span>[<span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>HasExistingSession</span>] <span style=color:#f92672>=</span> () <span style=color:#f92672>=&gt;</span> {
+    <span style=color:#a6e22e>redirectToHomePage</span>();
+}
+<span style=color:#a6e22e>strategies</span>[<span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>IsLockedOut</span>] <span style=color:#f92672>=</span> () <span style=color:#f92672>=&gt;</span> {
+    <span style=color:#a6e22e>redirectToUserLockedOutPage</span>();
+}
+<span style=color:#a6e22e>strategies</span>[<span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>IsFirstLogin</span>] <span style=color:#f92672>=</span> () <span style=color:#f92672>=&gt;</span> {
+    <span style=color:#a6e22e>redirectToWelcomePage</span>();
+}
+<span style=color:#a6e22e>strategies</span>[<span style=color:#a6e22e>AuthentificationResult</span>.<span style=color:#a6e22e>Successful</span>] <span style=color:#f92672>=</span> () <span style=color:#f92672>=&gt;</span> {
+    <span style=color:#a6e22e>redirectToUserDashboard</span>();
+}
+<span style=color:#a6e22e>strategies</span>[<span style=color:#a6e22e>result</span>]();
+
+</code></pre></div>
+</div>
+<footer class=content__footer></footer>
+</section>
+<section class=page__aside>
+<div class=aside__about>
+<div class=aside__about>
+<h1 class=about__title>Qui suis-je ?</h1>
+<p class=about__description>Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies</p>
+</div>
+<ul class=aside__social-links>
+<li>
+<a href=https://github.com/Shammas44 rel=me aria-label=GitHub title=GitHub><i class="fa-brands fa-github" aria-hidden=true></i></a>&nbsp;
+</li>
+</ul>
+</div>
+<hr>
+<div class=aside__content>
+<p>
+By Sébastien Traber,
+2023-01-25
+</p>
+</div>
+</section>
+<footer class=page__footer><p>
+</p>
+<br><br>
+<p class=copyright>© 2023 <a href=https://sebastientraber.com>Sébastien Traber</a></p>
+<p class=advertisement>Powered by <a href=https://gohugo.io/>hugo</a> and <a href=https://github.com/joeroe/risotto>risotto</a>.</p>
+</footer>
+</div>
+</body>
+</html>

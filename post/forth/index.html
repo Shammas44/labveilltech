@@ -1,0 +1,479 @@
+<!doctype html><html lang=fr>
+<head><title>Le language de programmation forth &ndash; Sébastien Traber</title>
+<meta name=description content="Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta charset=utf-8>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css integrity="sha512-b1ASx0WHgVFL5ZQhTgiPWX+68KjS38Jk87jg7pe+qC7q9YkEtFq0z7xCglv7qGIs/68d3mAp+StfC8WKC5SSAg==" crossorigin=anonymous>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/palettes/base16-dark.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/risotto.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/custom.css>
+</head>
+<body>
+<div class=page>
+<header class=page__header><h1 class=page__logo><a href=https://shammas44.github.io/labveilltech/ class=page__logo-inner>Sébastien Traber</a></h1>
+<nav class="page__nav main-nav">
+<ul>
+<li class=main-nav__item><a class="nav-main-item active" href=https://shammas44.github.io/labveilltech/post/ title=Posts>Posts</a></li>
+</ul>
+</nav>
+</header>
+<section class=page__body>
+<header class=content__header>
+<h1>Le language de programmation forth</h1>
+</header>
+<div class=content__body>
+<p>Sur mon temps libre j&rsquo;ai commancé la lecture d&rsquo;une livre intitulé Strange Code écris par Ronald T. Kneusel. Ce livre s&rsquo;intéresse à décortiquer des langages de progrmmation étrange.</p>
+<p>Il s&rsquo;agit pour moi d&rsquo;une bonne façon d&rsquo;approfondir mes connaisances en programmation en étudiant d&rsquo;autres languages parfois même très bas niveau. C&rsquo;est ainsi que j&rsquo;ai découvert le langage nommé <code>forth</code></p>
+<p>Forth est un langage de programmation impératif, procédural et réflexif. Il est basé sur un modèle de pile, ce qui signifie que les données et les instructions sont stockées dans une pile et manipulées à partir de celle-ci. Les instructions Forth sont généralement très courtes et peuvent être combinées pour créer des programmes plus complexes.</p>
+<p>Les principales caractéristiques de Forth sont sa flexibilité, sa simplicité et sa puissance. Il est encore utilisé aujaurd&rsquo;hui dans certaines applications embarquées. Une des particularité de <code>forth</code> c&rsquo;est que l&rsquo;utilisateur va intéragir directement avec la <code>stackpile</code> comme nous les verons dans les exemples suivants.</p>
+<p><strong>installer gforth</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sudo apt-get install gforth
+</code></pre></div><p><strong>Quitter gforth</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#66d9ef>bye
+</span></code></pre></div><p><strong>Exemple basic</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#66d9ef>cr </span><span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2</span> <span style=color:#ae81ff>3</span> <span style=color:#66d9ef>.
+</span></code></pre></div><ul>
+<li><code>cr</code>: ordonne au prompte de se déplacer sur la ligne suivante</li>
+<li><code>1 2 3</code>: insére consécutivement <code>1</code>, <code>2</code> puis <code>3</code> dans la <code>stackpil</code></li>
+<li><code>.</code>: affiche la valeur de la stack supérieur</li>
+</ul>
+<p><strong>Supprimer toute la pile</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#a6e22e>clear</span>
+</code></pre></div><h2 id=manipuler-la-pile>Manipuler la pile</h2>
+<table>
+<thead>
+<tr>
+<th style=text-align:center>Word</th>
+<th style=text-align:center>Effect</th>
+<th style=text-align:center>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=text-align:center>dup</td>
+<td style=text-align:center>( a &ndash; a a)</td>
+<td style=text-align:center>Duplicate the top stack item</td>
+</tr>
+<tr>
+<td style=text-align:center>drop</td>
+<td style=text-align:center>( a b &ndash; a )</td>
+<td style=text-align:center>Drop the top of stack item</td>
+</tr>
+<tr>
+<td style=text-align:center>swap</td>
+<td style=text-align:center>( a b &ndash; b a )</td>
+<td style=text-align:center>Swap the top two stack items</td>
+</tr>
+<tr>
+<td style=text-align:center>2dup</td>
+<td style=text-align:center>( a b &ndash; a b a b )</td>
+<td style=text-align:center>Duplicate the top two stack items</td>
+</tr>
+<tr>
+<td style=text-align:center>2drop</td>
+<td style=text-align:center>( a b c &ndash; a )</td>
+<td style=text-align:center>Drop the top two stack items</td>
+</tr>
+<tr>
+<td style=text-align:center>over</td>
+<td style=text-align:center>( a b &ndash; a b a )</td>
+<td style=text-align:center>Copy the next to top of stack items</td>
+</tr>
+<tr>
+<td style=text-align:center>rot</td>
+<td style=text-align:center>( a b c &ndash; b c a )</td>
+<td style=text-align:center>Rotate the top three stack items</td>
+</tr>
+<tr>
+<td style=text-align:center>nip</td>
+<td style=text-align:center>( a b c &ndash; a c )</td>
+<td style=text-align:center>Drop the next to top of stack item</td>
+</tr>
+<tr>
+<td style=text-align:center>.s</td>
+<td style=text-align:center>( &ndash; )</td>
+<td style=text-align:center>Print the stack without altering it</td>
+</tr>
+</tbody>
+</table>
+<h2 id=opérations-mathématiques>Opérations mathématiques</h2>
+<blockquote>
+<p>📚 <strong>Ordre des opérations</strong> <br>
+Forth ne respecte pas l&rsquo;ordre standart des opérations mathématiques. Au contraire les calculs sont efféctué de gauche à droite, cependant les opérateurs sont toujours placé avec les nombres. Ainsi <code>2 + 3</code> devient <code>2 3 +</code> avec forth</p>
+</blockquote>
+<ul>
+<li>(1200 * 3) / 4 -> <code>1200 3 * 4 /</code></li>
+<li>8 * (127 - 9) / 11 -> <code>127 9 - 8 * 11 /</code></li>
+<li>8 * (127 - 9) mod 11 -> <code>127 9 - 8 * 11 mod</code></li>
+<li>((33 - 45) / (7 + 9)) * 3 -> <code>33 45 - 7 9 + / 3 *</code></li>
+</ul>
+<h2 id=définir-notre-propre-mots-clé>Définir notre propre mots clé</h2>
+<p>La commande <code>:</code> permet de créer un nouveau mot-clé qui peut être utilisé pour exécuter un ensemble d&rsquo;instructions.</p>
+<p><strong>Exemple 1: addition</strong></p>
+<p>Par exemple, définir un mot-clé <code>add</code> qui prend deux nombres en entrée <code>n1</code> et <code>n2</code> et renvoie leur somme.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>add</span> <span style=color:#75715e>( n1 n2 -- sum )</span> <span style=color:#66d9ef>+ ;
+</span><span style=color:#66d9ef></span><span style=color:#ae81ff>2</span> <span style=color:#ae81ff>3</span> <span style=color:#a6e22e>add</span> <span style=color:#66d9ef>. </span><span style=color:#a6e22e>&lt;1&gt;</span> <span style=color:#ae81ff>5</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><ul>
+<li><code>:</code> sers à définir un nouveau mot clé</li>
+<li><code>add</code> le nom de mot clé</li>
+<li><code>( n1 n2 -- sum )</code> commentaire <em>facultatif</em> <code>( input1 -- returnValue )</code></li>
+<li><code>+</code> le corps de la fonction, dans ce cas effectue une addition</li>
+<li><code>;</code> indique la fin de la défintion du mot clé</li>
+</ul>
+<p><strong>Exemple 2: hello world</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#75715e>( affiche Hello, world! )</span>
+<span style=color:#f92672>:</span> <span style=color:#a6e22e>hi</span> <span style=color:#75715e>( -- )</span> <span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>Hello, world!</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>cr ;
+</span><span style=color:#66d9ef></span><span style=color:#75715e>( affiche 10 fois Hello, world! dans la console )</span>
+<span style=color:#f92672>:</span> <span style=color:#a6e22e>hello</span> <span style=color:#75715e>( -- )</span> <span style=color:#ae81ff>10</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>do </span><span style=color:#a6e22e>hi</span> <span style=color:#66d9ef>loop ;
+</span></code></pre></div><ul>
+<li>📚 <code>."</code> début de la compilation d&rsquo;une chaine de charactère</li>
+<li>⚠️ l&rsquo;espace avant Hello world est requis</li>
+</ul>
+<h2 id=boucle>boucle</h2>
+<p>Le mot clé <code>loop</code> ne peut être utilisé que dans une définition de mot clé</p>
+<p><strong>Syntaxe d&rsquo;une boucle</strong></p>
+<pre tabindex=0><code>&lt;end&gt; &lt;start&gt; do &lt;body&gt; loop
+</code></pre><p><strong>Boucle for en c</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>10</span>; i<span style=color:#f92672>++</span>)
+  printf(<span style=color:#e6db74>&#34;Hello, world!</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>)
+</code></pre></div><p><strong>Boucle for en forth</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>counter</span> <span style=color:#75715e>( -- )</span> <span style=color:#ae81ff>10</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>do i . loop ;
+</span><span style=color:#66d9ef></span><span style=color:#a6e22e>counter</span> <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2</span> <span style=color:#ae81ff>3</span> <span style=color:#ae81ff>4</span> <span style=color:#ae81ff>5</span> <span style=color:#ae81ff>6</span> <span style=color:#ae81ff>7</span> <span style=color:#ae81ff>8</span> <span style=color:#ae81ff>9</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><p><strong>Boucle for en forth incrémenté de 3</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>counter</span> <span style=color:#75715e>( -- )</span> <span style=color:#ae81ff>20</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>do i . </span><span style=color:#ae81ff>3</span> <span style=color:#66d9ef>+loop ;
+</span><span style=color:#66d9ef></span><span style=color:#a6e22e>counter</span> <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>3</span> <span style=color:#ae81ff>6</span> <span style=color:#ae81ff>9</span> <span style=color:#ae81ff>12</span> <span style=color:#ae81ff>15</span> <span style=color:#ae81ff>18</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><p><strong>Boucle for en forth utilisant l&rsquo;index comme incrément</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>counter</span> <span style=color:#75715e>( -- )</span> <span style=color:#ae81ff>100</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>do i dup . +loop ;
+</span><span style=color:#66d9ef></span><span style=color:#a6e22e>counter</span> <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2</span> <span style=color:#ae81ff>4</span> <span style=color:#ae81ff>8</span> <span style=color:#ae81ff>16</span> <span style=color:#ae81ff>32</span> <span style=color:#ae81ff>64</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><p><strong>Double boucle en forth</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>nested</span> <span style=color:#75715e>( -- )</span>
+  <span style=color:#ae81ff>3</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>do
+</span><span style=color:#66d9ef></span>    <span style=color:#ae81ff>3</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>do </span> 
+      <span style=color:#66d9ef>j . i . space
+</span><span style=color:#66d9ef></span>    <span style=color:#66d9ef>loop
+</span><span style=color:#66d9ef></span>  <span style=color:#66d9ef>loop ;
+</span></code></pre></div><ul>
+<li>📚: <code>space</code> affiche un espace</li>
+</ul>
+<h2 id=boolean>Boolean</h2>
+<ul>
+<li><code>0</code> -> <code>false</code></li>
+<li><code>-1</code> -> <code>true</code></li>
+<li><code>></code> -> plus grand que</li>
+<li><code>&lt;</code> -> plus petit que</li>
+<li><code>=</code> -> égal</li>
+<li><code>&lt;></code> -> pas égal</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2</span> <span style=color:#66d9ef>&lt; . </span><span style=color:#ae81ff>-1</span> 
+<span style=color:#ae81ff>-123</span> <span style=color:#ae81ff>321</span> <span style=color:#66d9ef>&lt; . </span><span style=color:#ae81ff>-1</span> 
+<span style=color:#ae81ff>45</span> <span style=color:#ae81ff>3</span> <span style=color:#66d9ef>&gt; . </span><span style=color:#ae81ff>-1</span> 
+<span style=color:#ae81ff>3</span> <span style=color:#ae81ff>45</span> <span style=color:#a6e22e>=</span> <span style=color:#66d9ef>. </span><span style=color:#ae81ff>0</span>
+<span style=color:#ae81ff>3</span> <span style=color:#ae81ff>45</span> <span style=color:#a6e22e>&lt;&gt;</span> <span style=color:#66d9ef>. </span><span style=color:#ae81ff>-1</span>
+</code></pre></div><h2 id=conditions>Conditions</h2>
+<p><strong>Syntaxe</strong></p>
+<pre tabindex=0><code>&lt;condition&gt; if &lt;true_instructions&gt; then
+&lt;condition&gt; if &lt;true_instructions&gt; else &lt;false_instructions&gt; then
+</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>porridge</span>(n):
+  print(<span style=color:#e6db74>&#34;The porridge is &#34;</span>, end<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;&#34;</span>)
+  <span style=color:#66d9ef>if</span> (n <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>90</span>):
+    print(<span style=color:#e6db74>&#34;too cold&#34;</span>)  
+  elsif (n <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>100</span>):
+    print(<span style=color:#e6db74>&#34;too hot&#34;</span>)  
+  <span style=color:#66d9ef>else</span>:
+    print(<span style=color:#e6db74>&#34;just right&#34;</span>)
+</code></pre></div><p><strong>Exemple de condition</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>porridge</span> <span style=color:#75715e>( n -- )</span>
+  <span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>The porridge is </span><span style=color:#a6e22e>&#34;</span>
+  <span style=color:#66d9ef>dup </span><span style=color:#ae81ff>90</span> <span style=color:#66d9ef>&lt; if drop </span><span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>too cold</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>else
+</span><span style=color:#66d9ef></span>     <span style=color:#ae81ff>100</span> <span style=color:#66d9ef>&lt; if </span><span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>just right</span><span style=color:#a6e22e>&#34;</span>    <span style=color:#66d9ef>else
+</span><span style=color:#66d9ef></span>    <span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>too hot</span><span style=color:#a6e22e>&#34;</span>
+  <span style=color:#66d9ef>then then cr ;
+</span><span style=color:#66d9ef></span>  
+</code></pre></div><pre tabindex=0><code>80 porridge The porridge is to cold
+ok
+99 porridge The porridge is just right
+ok
+111 porridge The porridge is too hot
+</code></pre><p><strong>Explications</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#66d9ef>dup </span><span style=color:#ae81ff>90</span> <span style=color:#66d9ef>&lt; if drop </span><span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>too cold</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>else
+</span></code></pre></div><ol>
+<li><code>dup</code> duplique la température,</li>
+</ol>
+<ul>
+<li>📚 Nécéssaire car <code>&lt;</code> consomme <code>n</code> et <code>90</code> pour tester que <code>n &lt; 90</code></li>
+<li>📚 Si le premier <code>if</code> échoue, le second <code>if</code> nécéssite une copy de <code>n</code></li>
+</ul>
+<ol start=2>
+<li>Le résultat <code>0</code> ou <code>-1</code> est ensuite poussé au dessus de la pile</li>
+</ol>
+<ul>
+<li>📚 A ce stade la pile contient <code>n</code> et le résultat de la condition</li>
+</ul>
+<ol start=3>
+<li>le prochain <code>if</code> consomme le résultat de la condition</li>
+<li>Si le premier test passe, <code>drop</code> supprime la duplication de <code>n</code></li>
+</ol>
+<ul>
+<li>📚 Autrement ce dernier reste dans la pile</li>
+</ul>
+<h3 id=swtich>Swtich</h3>
+<p>Certaines version de forth dont nottament <code>gforth</code> inclue une forme de switch similaire au <code>c</code></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>menu</span> <span style=color:#75715e>( n -- )</span>
+  <span style=color:#66d9ef>case
+</span><span style=color:#66d9ef></span>    <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>of </span><span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>option 0</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>endof
+</span><span style=color:#66d9ef></span>    <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>of </span><span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>option 1</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>endof
+</span><span style=color:#66d9ef></span>    <span style=color:#ae81ff>2</span> <span style=color:#66d9ef>of </span><span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>option 2</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>endof
+</span><span style=color:#66d9ef></span>    <span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>bad option</span><span style=color:#a6e22e>&#34;</span>
+  <span style=color:#66d9ef>endcase ;
+</span></code></pre></div><pre tabindex=0><code>0 menu option 0 ok
+1 menu option 1 ok
+2 menu option 2 ok
+3 menu bad option ok
+</code></pre><h2 id=autres-formes-de-boucles>Autres formes de boucles</h2>
+<p><strong>Syntaxes</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#75715e>(  boucle while )</span>
+<span style=color:#66d9ef>begin </span><span style=color:#a6e22e>&lt;condition&gt;</span> <span style=color:#66d9ef>while </span><span style=color:#a6e22e>&lt;body&gt;</span> <span style=color:#66d9ef>repeat
+</span><span style=color:#66d9ef></span><span style=color:#75715e>(  do while )</span>
+<span style=color:#66d9ef>begin </span><span style=color:#a6e22e>&lt;body&gt;</span> <span style=color:#a6e22e>&lt;condition&gt;</span> <span style=color:#66d9ef>until
+</span><span style=color:#66d9ef></span><span style=color:#75715e>(  boucle infinie )</span>
+<span style=color:#66d9ef>begin </span><span style=color:#a6e22e>&lt;body&gt;</span> <span style=color:#66d9ef>again
+</span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#75715e>( boucle infinie qui affiche tout les nombres de 0 à infinie)</span>
+<span style=color:#f92672>:</span> <span style=color:#a6e22e>infinity</span> <span style=color:#75715e>( -- )</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>begin dup . cr 1+ again ;
+</span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#75715e>( calcul la racine carré de n )</span>
+<span style=color:#f92672>:</span> <span style=color:#a6e22e>dsqr</span> <span style=color:#75715e>( n -- )</span> <span style=color:#ae81ff>0</span> <span style=color:#66d9ef>begin 2dup dup * &gt; while 1+ repeat nip ; </span>
+<span style=color:#ae81ff>4</span> <span style=color:#a6e22e>dsqr</span> <span style=color:#66d9ef>.s </span>
+<span style=color:#a6e22e>&lt;1&gt;</span> <span style=color:#ae81ff>2</span> <span style=color:#a6e22e>ok</span> <span style=color:#75715e>( affiche bien 2 )</span>
+</code></pre></div><p><strong>Explications</strong></p>
+<table>
+<thead>
+<tr>
+<th style=text-align:center>Etapes</th>
+<th style=text-align:center>Pile</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=text-align:center>4 dsqr</td>
+<td style=text-align:center>4</td>
+</tr>
+<tr>
+<td style=text-align:center>0</td>
+<td style=text-align:center>4 0</td>
+</tr>
+<tr>
+<td style=text-align:center>begin</td>
+<td style=text-align:center>4 0</td>
+</tr>
+<tr>
+<td style=text-align:center>2dup</td>
+<td style=text-align:center>4 0 4 0</td>
+</tr>
+<tr>
+<td style=text-align:center>dup</td>
+<td style=text-align:center>4 0 4 0 0</td>
+</tr>
+<tr>
+<td style=text-align:center>*</td>
+<td style=text-align:center>4 0 4 0</td>
+</tr>
+<tr>
+<td style=text-align:center>></td>
+<td style=text-align:center>4 0 -1</td>
+</tr>
+<tr>
+<td style=text-align:center>while</td>
+<td style=text-align:center>4 0</td>
+</tr>
+<tr>
+<td style=text-align:center>1+</td>
+<td style=text-align:center>4 1</td>
+</tr>
+<tr>
+<td style=text-align:center>repeat</td>
+<td style=text-align:center>4 1</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>📚 <code>nip</code> éxécuté dès que la condition est fausse, supprimer <code>n</code> de la pile</li>
+</ul>
+<h2 id=variables-et-constantes>Variables et constantes</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>variable</span> <span style=color:#a6e22e>f</span>
+<span style=color:#f92672>variable</span> <span style=color:#a6e22e>c</span> 
+<span style=color:#ae81ff>32</span> <span style=color:#f92672>constant</span> <span style=color:#a6e22e>b</span>
+<span style=color:#f92672>:</span> <span style=color:#a6e22e>c2f</span> <span style=color:#a6e22e>c</span> <span style=color:#66d9ef>@ </span><span style=color:#ae81ff>9</span> <span style=color:#66d9ef>* </span><span style=color:#ae81ff>5</span> <span style=color:#66d9ef>/ </span><span style=color:#a6e22e>b</span> <span style=color:#66d9ef>+ </span><span style=color:#a6e22e>f</span> <span style=color:#66d9ef>! ; </span><span style=color:#75715e>( celsius to farenheit)</span>
+<span style=color:#f92672>:</span> <span style=color:#a6e22e>f2c</span> <span style=color:#a6e22e>f</span> <span style=color:#66d9ef>@ </span><span style=color:#a6e22e>b</span> <span style=color:#66d9ef>- </span><span style=color:#ae81ff>5</span> <span style=color:#66d9ef>* </span><span style=color:#ae81ff>9</span> <span style=color:#66d9ef>/ </span><span style=color:#a6e22e>c</span> <span style=color:#66d9ef>! ; </span><span style=color:#75715e>( farenheit to celsius)</span>
+<span style=color:#ae81ff>212</span> <span style=color:#a6e22e>f</span> <span style=color:#66d9ef>! </span><span style=color:#a6e22e>f2c</span> <span style=color:#a6e22e>c</span> <span style=color:#66d9ef>@ . </span><span style=color:#ae81ff>100</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>22</span> <span style=color:#a6e22e>c</span> <span style=color:#66d9ef>! </span><span style=color:#a6e22e>c2f</span> <span style=color:#a6e22e>f</span> <span style=color:#66d9ef>@ . </span><span style=color:#ae81ff>71</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>32</span> <span style=color:#a6e22e>f</span> <span style=color:#66d9ef>! </span><span style=color:#a6e22e>f2c</span> <span style=color:#a6e22e>c</span> <span style=color:#66d9ef>@ . </span><span style=color:#ae81ff>0</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><ul>
+<li><code>variable f</code> et <code>variable c</code> définissent des variables</li>
+<li><code>32 constant b</code> définis une constant <code>b</code> égal au haut de la pile soit <code>32</code></li>
+<li>📚 <code>c</code> ajoute l&rsquo;addresse de la variable <code>c</code> à la pile</li>
+<li>📚 <code>c @</code> ajoute la valeur de la variable <code>c</code> à la pile</li>
+<li>📚 <code>!</code> enregistre la valeur précédante à l&rsquo;adresse en haut de la pile</li>
+</ul>
+<p><strong>Incrémenter une variable</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#75715e>( forme standart)</span>
+<span style=color:#a6e22e>x</span> <span style=color:#66d9ef>@ 1+ </span><span style=color:#a6e22e>x</span> <span style=color:#66d9ef>!
+</span><span style=color:#66d9ef></span><span style=color:#75715e>( forme racourcie )</span>
+<span style=color:#ae81ff>1</span> <span style=color:#a6e22e>x</span> <span style=color:#a6e22e>+!</span>
+</code></pre></div><h2 id=allouer-de-la-mémoire>Allouer de la mémoire</h2>
+<table>
+<thead>
+<tr>
+<th style=text-align:center>Word</th>
+<th style=text-align:center>Effect</th>
+<th style=text-align:center>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=text-align:center>@</td>
+<td style=text-align:center>( a &ndash; a )</td>
+<td style=text-align:center>Get the 64-bit integer at address a</td>
+</tr>
+<tr>
+<td style=text-align:center>!</td>
+<td style=text-align:center>( n a &ndash; )</td>
+<td style=text-align:center>Store a 64-bit integer in address a</td>
+</tr>
+<tr>
+<td style=text-align:center>,</td>
+<td style=text-align:center>( n &ndash; )</td>
+<td style=text-align:center>Compile an integer into the dictionary</td>
+</tr>
+<tr>
+<td style=text-align:center>c@</td>
+<td style=text-align:center>( a &ndash; b )</td>
+<td style=text-align:center>Get the byte at address a</td>
+</tr>
+<tr>
+<td style=text-align:center>c!</td>
+<td style=text-align:center>( b a &ndash; )</td>
+<td style=text-align:center>Store a byte at address a</td>
+</tr>
+<tr>
+<td style=text-align:center>c,</td>
+<td style=text-align:center>( b &ndash; )</td>
+<td style=text-align:center>Compile a byte to the dictionary</td>
+</tr>
+<tr>
+<td style=text-align:center>create</td>
+<td style=text-align:center>( &ndash; )</td>
+<td style=text-align:center>Create a new word</td>
+</tr>
+<tr>
+<td style=text-align:center>does></td>
+<td style=text-align:center>( &ndash; a )</td>
+<td style=text-align:center>Define the word&rsquo;s behavior</td>
+</tr>
+<tr>
+<td style=text-align:center>allot</td>
+<td style=text-align:center>( b &ndash; )</td>
+<td style=text-align:center>Allocate dictionary space (bytes)</td>
+</tr>
+<tr>
+<td style=text-align:center>cells</td>
+<td style=text-align:center>( n &ndash; b )</td>
+<td style=text-align:center>Convert cells to bytes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Allouer de l&rsquo;espace mémoire à un mot du dictionnaire de forth</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#75715e>( Crée un mot nommé buf contenant 1000 bytes d&#39;espace mémoire )</span>
+<span style=color:#66d9ef>create </span><span style=color:#a6e22e>buf</span> <span style=color:#ae81ff>1000</span> <span style=color:#66d9ef>allot </span><span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Ajoute 1 au premier byte de buf )</span>
+<span style=color:#ae81ff>1</span> <span style=color:#a6e22e>buf</span> <span style=color:#66d9ef>c! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Ajoute 2 au deuxième byte de buf )</span>
+<span style=color:#ae81ff>2</span> <span style=color:#a6e22e>buf</span> <span style=color:#66d9ef>1+ c! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Ajoute 3 au troisième byte de buf )</span>
+<span style=color:#ae81ff>3</span> <span style=color:#a6e22e>buf</span> <span style=color:#ae81ff>2</span> <span style=color:#66d9ef>+ c! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Affiche la valeur du premier byte de buf )</span>
+<span style=color:#a6e22e>buf</span> <span style=color:#66d9ef>c@ . </span><span style=color:#ae81ff>1</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Affiche la valeur du deuxième byte de buf )</span>
+<span style=color:#a6e22e>buf</span> <span style=color:#66d9ef>1+ c@ . </span><span style=color:#ae81ff>2</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Affiche la valeur du troisième byte de buf )</span>
+<span style=color:#a6e22e>buf</span> <span style=color:#ae81ff>2</span> <span style=color:#66d9ef>+ c@ . </span><span style=color:#ae81ff>3</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Stocke une valeur de 64-bit dans le 4ème byte de buf )</span>
+<span style=color:#ae81ff>123456789</span> <span style=color:#a6e22e>buf</span> <span style=color:#ae81ff>3</span> <span style=color:#66d9ef>+ ! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Affiche la valeur du quatrième byte de buf )</span>
+<span style=color:#a6e22e>buf</span> <span style=color:#ae81ff>3</span> <span style=color:#66d9ef>+ @ . </span><span style=color:#ae81ff>123456789</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><p><strong>Créer un tableau de bytes</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>bArray</span> <span style=color:#75715e>( n -- )</span> <span style=color:#66d9ef>create allot does&gt; + ; </span><span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>100</span> <span style=color:#a6e22e>bArray</span> <span style=color:#a6e22e>x</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>123</span> <span style=color:#ae81ff>0</span> <span style=color:#a6e22e>x</span> <span style=color:#66d9ef>c! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>124</span> <span style=color:#ae81ff>1</span> <span style=color:#a6e22e>x</span> <span style=color:#66d9ef>c! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>1</span> <span style=color:#a6e22e>x</span> <span style=color:#66d9ef>c@ . </span><span style=color:#ae81ff>124</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>0</span> <span style=color:#a6e22e>x</span> <span style=color:#66d9ef>c@ . </span><span style=color:#ae81ff>123</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>2</span> <span style=color:#a6e22e>x</span> <span style=color:#66d9ef>c@ . </span><span style=color:#ae81ff>125</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><p>La première ligne définis <code>bArray</code> qui attend comme paramètre un nombre sur la pile, correspondant au nombre de bytes à allouer a ce mot.</p>
+<p>le mot clé <code>does></code> est appelé a chaque fois que <code>bArray</code> est référencé. C&rsquo;est lui qui définis les étapes suivantes.</p>
+<p>Lorsque le mot <code>bArray</code> est exécuté, il va rajouter son addrese mémoire en hau t de la pile. puis <code>does></code> prend la relève.</p>
+<p>Le <code>+</code> défnis dans <code>does></code> sigifie que l&rsquo;adresse mémoire de <code>bArray</code> présent dans la pile et la valeur précédante dans la pile vont être additioné pour formé une nouvelle addresse qui sera poussé sur la pile.</p>
+<p>Ainsi <code>123 0 x c!</code> signifie que <code>123</code> va être poussé dans la pile puis <code>0</code>, puis <code>x</code> pousse son addresse mémoire dans la pile. C&rsquo;est alors <code>does></code> qui est éxécuté et qui va consommer l&rsquo;addresse de x ainsi que l&rsquo;index <code>0</code> pour faire une addition. le résultat est poussé sur la pile et correspond à l&rsquo;adresse da la cellule <code>0</code> du tableau <code>x</code>. C&rsquo;est alors <code>c!</code> qui est exécuté pour enregistrer la valeur <code>123</code> dans la cellule <code>0</code> de <code>x</code></p>
+<p>Par conséquent la notation <code>125 2 x c!</code> est équivalent à <code>x[2] = 125</code> en javascript. de même que <code>2 x c@</code> est la forme équivalente de <code>console.log(x[2])</code> toujours en javascript</p>
+<p><strong>Créer un tableau d&rsquo;entiers</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>array</span> <span style=color:#75715e>( n -- )</span> <span style=color:#66d9ef>create cells allot does&gt; swap cells + ; </span><span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>100</span> <span style=color:#a6e22e>array</span> <span style=color:#a6e22e>y</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>111111</span> <span style=color:#ae81ff>66</span> <span style=color:#a6e22e>y</span> <span style=color:#66d9ef>! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>222222</span> <span style=color:#ae81ff>67</span> <span style=color:#a6e22e>y</span> <span style=color:#66d9ef>! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>333333</span> <span style=color:#ae81ff>68</span> <span style=color:#a6e22e>y</span> <span style=color:#66d9ef>! </span><span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>66</span> <span style=color:#a6e22e>y</span> <span style=color:#66d9ef>@ . </span><span style=color:#ae81ff>111111</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>68</span> <span style=color:#a6e22e>y</span> <span style=color:#66d9ef>@ . </span><span style=color:#ae81ff>333333</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#ae81ff>67</span> <span style=color:#a6e22e>y</span> <span style=color:#66d9ef>@ . </span><span style=color:#ae81ff>222222</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><p>L&rsquo;unité de mémoire de base dans <code>forth</code> est appelé <code>cell</code>. Il s&rsquo;agit de <code>64 bits</code> ou <code>8 bytes</code>. Ainsi pour stocker <code>100</code> valeur, <code>800 bytes</code> sont requis.</p>
+<p>Pour indexer un tableau, il nous faut une addresse de base multiplié par la taille de la cellule.</p>
+<p>Le mot <code>cell</code> après <code>create</code> permet de calculer le nombre de bytes que <code>allot</code> doit réserver à la fin du dictionnaire.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#75715e>( Affiche le nombre de bytes pour stocker 1 valeur dans une cellule )</span>
+<span style=color:#ae81ff>1</span> <span style=color:#66d9ef>cells . </span><span style=color:#ae81ff>8</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#75715e>( Affiche le nombre de bytes pour stocker 100 valeurs dans des cellules )</span>
+<span style=color:#ae81ff>100</span> <span style=color:#66d9ef>cells . </span><span style=color:#ae81ff>800</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><p>Lorsque l&rsquo;on index le tableau, la partie après <code>does></code>, de devons dabord convertir l&rsquo;index depuis la cellule vers bytes et ajouter le résultat à l&rsquo;addresse de base. C&rsquo;est ce que fait <code>swap cells +</code></p>
+<p>Après ces changement, <code>array</code> fonctionne comme <code>bArray</code> mais il faut utiliser <code>!</code> et <code>@</code> pour <code>set</code> et <code>get</code> les valeurs du tableau</p>
+<p><strong>Initialiser un tableau avec des valeurs</strong></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#66d9ef>create </span><span style=color:#a6e22e>ABCDEF</span> <span style=color:#ae81ff>65</span> <span style=color:#66d9ef>c, </span><span style=color:#ae81ff>66</span> <span style=color:#66d9ef>c, </span><span style=color:#ae81ff>67</span> <span style=color:#66d9ef>c, </span><span style=color:#ae81ff>68</span> <span style=color:#66d9ef>c, </span><span style=color:#ae81ff>69</span> <span style=color:#66d9ef>c, </span><span style=color:#ae81ff>70</span> <span style=color:#66d9ef>c,
+</span></code></pre></div><p>Crée le mot <code>ABCDEF</code> et aloue 6 valeurs correspondant à la valuer <code>ASCII</code> des 6 première lettre de l&rsquo;alphabet grâce à <code>c,</code> on peut faire la même chose pour stocker des entiers avec juste <code>,</code></p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-forth data-lang=forth><span style=color:#f92672>:</span> <span style=color:#a6e22e>one</span> <span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>one</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>; </span><span style=color:#a6e22e>ok</span>
+<span style=color:#f92672>:</span> <span style=color:#a6e22e>two</span> <span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>two</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>; </span><span style=color:#a6e22e>ok</span>
+<span style=color:#f92672>:</span> <span style=color:#a6e22e>three</span> <span style=color:#e6db74>.&#34;</span> <span style=color:#e6db74>three</span><span style=color:#a6e22e>&#34;</span> <span style=color:#66d9ef>; </span><span style=color:#a6e22e>ok</span>
+<span style=color:#66d9ef>create </span><span style=color:#a6e22e>tbl</span> <span style=color:#a6e22e>&#39;</span> <span style=color:#a6e22e>one</span> <span style=color:#66d9ef>, </span><span style=color:#a6e22e>&#39;</span> <span style=color:#a6e22e>two</span> <span style=color:#66d9ef>, </span><span style=color:#a6e22e>&#39;</span> <span style=color:#a6e22e>three</span> <span style=color:#66d9ef>, </span><span style=color:#a6e22e>ok</span>
+<span style=color:#a6e22e>tbl</span> <span style=color:#ae81ff>2</span> <span style=color:#66d9ef>cells + </span> <span style=color:#66d9ef>@ execute </span><span style=color:#a6e22e>three</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#a6e22e>tbl</span> <span style=color:#ae81ff>1</span> <span style=color:#66d9ef>cells + </span> <span style=color:#66d9ef>@ execute </span><span style=color:#a6e22e>two</span> <span style=color:#a6e22e>ok</span>
+<span style=color:#a6e22e>tbl</span> <span style=color:#66d9ef>@ execute </span><span style=color:#a6e22e>one</span> <span style=color:#a6e22e>ok</span>
+</code></pre></div><p>Cette exemple introduit deux nouveau mots <code>'</code> et <code>execute</code>. le premier prend l&rsquo;addresse d&rsquo;execution du mot suivant et le place dans la pile. le mot <code>execute</code> execute le mot dont l&rsquo;addresse se trouve au dessus de la pile. Ainsi <code>tbl</code> est un tableau de 3 <code>function pointers</code></p>
+<h2 id=conclusion>Conclusion</h2>
+<p>En conclusion, j&rsquo;ai beaucoup apprécier le language et son principe de de manipulaton de la <code>stackpile</code>, cela nous force à avoir une très bonne comprhéension de ce mécanisme et de la gestion de la mémoire. Cependant cela fait aussi de <code>forth</code> un language très difficile à lire et qui demande beaucoup de concentration. Ainsi je n&rsquo;ai pas l&rsquo;intention de me servir de <code>forth</code> dans mon quotidien mais l&rsquo;exploration de ce language m&rsquo;as permis de mieux appréhender les concept de programmation tels que la <code>stackpile</code> et l&rsquo;addrésage mémoire.</p>
+</div>
+<footer class=content__footer></footer>
+</section>
+<section class=page__aside>
+<div class=aside__about>
+<div class=aside__about>
+<h1 class=about__title>Qui suis-je ?</h1>
+<p class=about__description>Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies</p>
+</div>
+<ul class=aside__social-links>
+<li>
+<a href=https://github.com/Shammas44 rel=me aria-label=GitHub title=GitHub><i class="fa-brands fa-github" aria-hidden=true></i></a>&nbsp;
+</li>
+</ul>
+</div>
+<hr>
+<div class=aside__content>
+<p>
+By Sébastien Traber,
+2023-01-27
+</p>
+</div>
+</section>
+<footer class=page__footer><p>
+</p>
+<br><br>
+<p class=copyright>© 2023 <a href=https://sebastientraber.com>Sébastien Traber</a></p>
+<p class=advertisement>Powered by <a href=https://gohugo.io/>hugo</a> and <a href=https://github.com/joeroe/risotto>risotto</a>.</p>
+</footer>
+</div>
+</body>
+</html>

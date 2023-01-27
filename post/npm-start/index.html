@@ -1,0 +1,65 @@
+<!doctype html><html lang=fr>
+<head><title>Npm run xxx &ndash; Sébastien Traber</title>
+<meta name=description content="Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta charset=utf-8>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css integrity="sha512-b1ASx0WHgVFL5ZQhTgiPWX+68KjS38Jk87jg7pe+qC7q9YkEtFq0z7xCglv7qGIs/68d3mAp+StfC8WKC5SSAg==" crossorigin=anonymous>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/palettes/base16-dark.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/risotto.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/custom.css>
+</head>
+<body>
+<div class=page>
+<header class=page__header><h1 class=page__logo><a href=https://shammas44.github.io/labveilltech/ class=page__logo-inner>Sébastien Traber</a></h1>
+<nav class="page__nav main-nav">
+<ul>
+<li class=main-nav__item><a class="nav-main-item active" href=https://shammas44.github.io/labveilltech/post/ title=Posts>Posts</a></li>
+</ul>
+</nav>
+</header>
+<section class=page__body>
+<header class=content__header>
+<h1>Npm run xxx</h1>
+</header>
+<div class=content__body>
+<p>Lors de mes nombreuses recherche sur le web, je suis tombé sur un article qui à retenue mon attention. Ce dernier s&rsquo;institule <strong>What happened to &ldquo;npm run xxx&rdquo;</strong> et explique ce que fait vraiment la commande <code>npm run xxx</code></p>
+<p>En tant que développeur javascript, je travaille constamment avec <code>npm</code> et l&rsquo;utilisation de la commande <code>npm run xxx</code> fait partis de mon quotidien. Cependant je ne m&rsquo;était jamais demandé ce que faisait réellement cette commande. Cette article à ainsi pu répondre à cette nouvelle interogation.</p>
+<p>Cet article est un petit résumé de l&rsquo;article <a href=https://javascript.plainenglish.io/interviewer-what-happened-to-npm-run-xxx-cdcb37dbaf44>What happened to &ldquo;npm run xxx&rdquo;</a> L&rsquo;article décrit une expérience d&rsquo;entretien d&rsquo;embauche d&rsquo;un développeur front-end. L&rsquo;intervieweur a posé des questions sur la commande <code>npm run xxx</code> et le développeur a admis ne pas la comprendre complètement.</p>
+<p>la première question de l&rsquo;intervieweur est la suivante. Pourquoi ne pas utiliser directement la commande <code>vue-cli-service serve</code> au lieu de <code>npm run serve</code> si le but de <code>npm run serve</code> est justement d&rsquo;éxécuté <code>vue-cli-service serve</code> ?</p>
+<p>On pourrait être tenté de répondre que ainsi la ccommande est plus rapide a tapper et à mémoriser. Cependant bien que cela ne soit pas faux ce n&rsquo;est pas la bonne explications.</p>
+<p>En réalité la commande <code>vue-cli-service serve</code> n&rsquo;existe pas sur le système d&rsquo;exploitation, il n&rsquo;est donc pas possible de l&rsquo;éxécuté de cette manière, raison pour laquelle on est obligé de passer par <code>npm</code> car <code>@vue/cli</code> est un outil installé au moyen de <code>npm</code></p>
+<p>L&rsquo;intervieweur a ensuite demandé pourquoi <code>npm run serve</code> fonctionne sans erreur, même si <code>vue-cli-service serve</code> n&rsquo;existe pas dans le système d&rsquo;exploitation. Le développeur n&rsquo;a pas su répondre tout de suite, mais a finalement découvert que lorsque <code>npm</code> installe une dépendance, il crée un fichier exécutable dans le répertoire <code>node_modules/.bin</code>. La commande <code>npm run</code> peut trouver et exécuter ce fichier en tant que script, même si la commande globale n&rsquo;est pas installée.</p>
+<p>En conslusion cette article démontre l&rsquo;importance de connaitre le fonctionnement des outils que nous utilisons au quotidien et de ne surtout pas hésiter à demander de l&rsquo;aide lorsque c&rsquo;est nécéssaire.</p>
+</div>
+<footer class=content__footer></footer>
+</section>
+<section class=page__aside>
+<div class=aside__about>
+<div class=aside__about>
+<h1 class=about__title>Qui suis-je ?</h1>
+<p class=about__description>Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies</p>
+</div>
+<ul class=aside__social-links>
+<li>
+<a href=https://github.com/Shammas44 rel=me aria-label=GitHub title=GitHub><i class="fa-brands fa-github" aria-hidden=true></i></a>&nbsp;
+</li>
+</ul>
+</div>
+<hr>
+<div class=aside__content>
+<p>
+By Sébastien Traber,
+2023-01-27
+</p>
+</div>
+</section>
+<footer class=page__footer><p>
+</p>
+<br><br>
+<p class=copyright>© 2023 <a href=https://sebastientraber.com>Sébastien Traber</a></p>
+<p class=advertisement>Powered by <a href=https://gohugo.io/>hugo</a> and <a href=https://github.com/joeroe/risotto>risotto</a>.</p>
+</footer>
+</div>
+</body>
+</html>

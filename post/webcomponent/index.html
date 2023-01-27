@@ -1,0 +1,155 @@
+<!doctype html><html lang=fr>
+<head><title>Les web components &ndash; Sébastien Traber</title>
+<meta name=description content="Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta charset=utf-8>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css integrity="sha512-b1ASx0WHgVFL5ZQhTgiPWX+68KjS38Jk87jg7pe+qC7q9YkEtFq0z7xCglv7qGIs/68d3mAp+StfC8WKC5SSAg==" crossorigin=anonymous>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/palettes/base16-dark.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/risotto.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/custom.css>
+</head>
+<body>
+<div class=page>
+<header class=page__header><h1 class=page__logo><a href=https://shammas44.github.io/labveilltech/ class=page__logo-inner>Sébastien Traber</a></h1>
+<nav class="page__nav main-nav">
+<ul>
+<li class=main-nav__item><a class="nav-main-item active" href=https://shammas44.github.io/labveilltech/post/ title=Posts>Posts</a></li>
+</ul>
+</nav>
+</header>
+<section class=page__body>
+<header class=content__header>
+<h1>Les web components</h1>
+</header>
+<div class=content__body>
+<p>Grâce à l&rsquo;un de mes abonnements YouTube, en l&rsquo;occurrence le youtubeur <a href="https://www.youtube.com/watch?v=2I7uX8m0Ta0&t=720s">Web Dev Simplified</a> j&rsquo;ai découvert le principe des web composants</p>
+<p>qui permet structurer le code de ses app avec une approche composant. Ceci permet ainsi de se passer des grandes libraires/framework front-end tels que react, vue ou angular.</p>
+<p>Les web composants sont une collection de technologies qui permettent aux développeurs de créer des composants personnalisés pour les navigateurs web. Ces composants peuvent être réutilisés à travers plusieurs pages et applications web, offrant ainsi une meilleure modularité et une meilleure maintenance du code.</p>
+<p>Il existe plusieurs technologies qui composent les web components, notamment :</p>
+<ul>
+<li>Les Custom Éléments, qui permettent de créer des éléments HTML personnalisés avec leur propre comportement et style.</li>
+<li>L&rsquo;API Shadow DOM, qui permet de créer un arbre DOM (Document Object Model) isolé pour chaque composant, ce qui permet de séparer le contenu d&rsquo;un composant de sa présentation.</li>
+<li>L&rsquo;API HTML Templates, qui permet de définir un modèle de code HTML qui peut être utilisé pour créer des éléments répétitifs.</li>
+</ul>
+<p>Voici un exemple de code qui utilise les Custom Éléments pour créer un composant de bouton :</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#f92672>button-component</span>&gt;Mon bouton&lt;/<span style=color:#f92672>button-component</span>&gt;
+
+&lt;<span style=color:#f92672>script</span>&gt;
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ButtonComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>HTMLElement</span> {
+  <span style=color:#a6e22e>constructor</span>() {
+    <span style=color:#66d9ef>super</span>();
+    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>attachShadow</span>({ <span style=color:#a6e22e>mode</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;open&#39;</span> });
+    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>shadowRoot</span>.<span style=color:#a6e22e>innerHTML</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>`
+</span><span style=color:#e6db74>      &lt;style&gt;
+</span><span style=color:#e6db74>        button {
+</span><span style=color:#e6db74>          background-color: blue;
+</span><span style=color:#e6db74>          color: white;
+</span><span style=color:#e6db74>          padding: 8px 16px;
+</span><span style=color:#e6db74>          border: none;
+</span><span style=color:#e6db74>          cursor: pointer;
+</span><span style=color:#e6db74>        }
+</span><span style=color:#e6db74>      &lt;/style&gt;
+</span><span style=color:#e6db74>      &lt;button&gt;&lt;slot&gt;&lt;/slot&gt;&lt;/button&gt;
+</span><span style=color:#e6db74>    `</span>;
+  }
+}
+<span style=color:#a6e22e>customElements</span>.<span style=color:#a6e22e>define</span>(<span style=color:#e6db74>&#39;button-component&#39;</span>, <span style=color:#a6e22e>ButtonComponent</span>);
+&lt;/<span style=color:#f92672>script</span>&gt;
+</code></pre></div><p>Ce code crée un nouvel élément HTML <button-component> qui affiche un bouton bleu avec du texte blanc. La propriété <slot> permet de spécifier où le contenu de l&rsquo;élément sera affiché, dans ce cas-ci c&rsquo;est dans le bouton.</p>
+<p>Voici un autre exemple qui utilise l&rsquo;API Shadow DOM pour créer un composant de carte :</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#f92672>card-component</span>&gt;
+  &lt;<span style=color:#f92672>h1</span> <span style=color:#a6e22e>slot</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;header&#34;</span>&gt;Titre de la carte&lt;/<span style=color:#f92672>h1</span>&gt;
+  &lt;<span style=color:#f92672>p</span> <span style=color:#a6e22e>slot</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;content&#34;</span>&gt;Contenu de la carte&lt;/<span style=color:#f92672>p</span>&gt;
+&lt;/<span style=color:#f92672>card-component</span>&gt;
+
+&lt;<span style=color:#f92672>script</span>&gt;
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>CardComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>HTMLElement</span> {
+  <span style=color:#a6e22e>constructor</span>() {
+    <span style=color:#66d9ef>super</span>();
+    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>attachShadow</span>({ <span style=color:#a6e22e>mode</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;open&#39;</span> });
+    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>shadowRoot</span>.<span style=color:#a6e22e>innerHTML</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>`
+</span><span style=color:#e6db74>      &lt;style&gt;
+</span><span style=color:#e6db74>        .card {
+</span><span style=color:#e6db74>          background-color: white;
+</span><span style=color:#e6db74>          border: 1px solid gray;
+</span><span style=color:#e6db74>          padding: 16px;
+</span><span style=color:#e6db74>        }
+</span><span style=color:#e6db74>        .card h1 {
+</span><span style=color:#e6db74>          margin-top: 0;
+</span><span style=color:#e6db74>        }
+</span><span style=color:#e6db74>      &lt;/style&gt;
+</span><span style=color:#e6db74>      &lt;div class=&#34;card&#34;&gt;
+</span><span style=color:#e6db74>        &lt;slot name=&#34;header&#34;&gt;&lt;/slot&gt;
+</span><span style=color:#e6db74>        &lt;slot name=&#34;content&#34;&gt;&lt;/slot&gt;
+</span><span style=color:#e6db74>      &lt;/div&gt;
+</span><span style=color:#e6db74>    `</span>;
+  }
+}
+<span style=color:#a6e22e>customElements</span>.<span style=color:#a6e22e>define</span>(<span style=color:#e6db74>&#39;card-component&#39;</span>, <span style=color:#a6e22e>CardComponent</span>);
+&lt;/<span style=color:#f92672>script</span>&gt;
+</code></pre></div><h2 id=stylisation-des-web-composants>Stylisation des web composants</h2>
+<p>L&rsquo;encapsulation du style dans les web components permet de séparer le contenu d&rsquo;un composant de sa présentation. Cela est rendu possible grâce à l&rsquo;utilisation de l&rsquo;API Shadow DOM, qui permet de créer un arbre DOM (Document Object Model) isolé pour chaque composant.</p>
+<p>Lorsqu&rsquo;un composant utilise le Shadow DOM, tous les styles définis à l&rsquo;intérieur de celui-ci n&rsquo;affecteront que les éléments de ce composant et n&rsquo;interféreront pas avec les styles des autres éléments de la page. De plus, les styles définis à l&rsquo;extérieur du composant ne seront pas appliqués aux éléments à l&rsquo;intérieur du composant.
+Cela permet de créer des composants qui sont indépendants de leur environnement, ce qui facilite la réutilisation de ces composants dans différentes pages et applications.</p>
+<p>Voici un exemple de code qui utilise l&rsquo;API Shadow DOM pour encapsuler les styles d&rsquo;un composant :</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>&lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>id</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;app&#34;</span>&gt;
+  &lt;<span style=color:#f92672>my-component</span>&gt;Contenu de mon composant&lt;/<span style=color:#f92672>my-component</span>&gt;
+  &lt;<span style=color:#f92672>style</span>&gt;
+    <span style=color:#75715e>/* styles qui s&#39;appliquent à toute la page */</span>
+  &lt;/<span style=color:#f92672>style</span>&gt;
+&lt;/<span style=color:#f92672>div</span>&gt;
+
+&lt;<span style=color:#f92672>script</span>&gt;
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MyComponent</span> <span style=color:#66d9ef>extends</span> <span style=color:#a6e22e>HTMLElement</span> {
+  <span style=color:#a6e22e>constructor</span>() {
+    <span style=color:#66d9ef>super</span>();
+    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>attachShadow</span>({ <span style=color:#a6e22e>mode</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;open&#39;</span> });
+    <span style=color:#66d9ef>this</span>.<span style=color:#a6e22e>shadowRoot</span>.<span style=color:#a6e22e>innerHTML</span> <span style=color:#f92672>=</span> <span style=color:#e6db74>`
+</span><span style=color:#e6db74>      &lt;style&gt;
+</span><span style=color:#e6db74>        /* styles qui s&#39;appliquent uniquement à mon composant */
+</span><span style=color:#e6db74>      &lt;/style&gt;
+</span><span style=color:#e6db74>      &lt;div&gt;
+</span><span style=color:#e6db74>        &lt;slot&gt;&lt;/slot&gt;
+</span><span style=color:#e6db74>      &lt;/div&gt;
+</span><span style=color:#e6db74>    `</span>;
+  }
+}
+<span style=color:#a6e22e>customElements</span>.<span style=color:#a6e22e>define</span>(<span style=color:#e6db74>&#39;my-component&#39;</span>, <span style=color:#a6e22e>MyComponent</span>);
+&lt;/<span style=color:#f92672>script</span>&gt;
+</code></pre></div><p>Dans cet exemple, nous avons défini un composant <code>my-component</code>, qui possède un arbre DOM isolé grâce à l&rsquo;utilisation de la méthode attachShadow. Les styles définis à l&rsquo;intérieur de ce composant n&rsquo;affecteront que les éléments à l&rsquo;intérieur de celui-ci, et ne seront pas affectés par les styles définis à l&rsquo;extérieur de ce composant, dans la page d&rsquo;accueil par exemple.</p>
+<p>En encapsulant les styles de cette façon, les composants sont plus faciles à maintenir et à réutiliser, car ils ne dépendent pas des styles définis dans leur environnement. Cela permet également de limiter les conflits de styles entre différents composants et de faciliter l&rsquo;application de styles uniques à chaque composant.</p>
+<h2 id=conclusion>Conclusion</h2>
+<p>En conclusion, les web components offrant une meilleure modularité et une meilleure maintenance du code en permettant de réutiliser des composants à travers plusieurs pages et applications web. Les Custom Éléments, l&rsquo;API Shadow DOM et l&rsquo;API HTML Templates sont les principales technologies qui composent les web composants et peuvent être utilisées ensemble pour créer des composants plus complets et avancés. Ces technologies sont en cours d&rsquo;évolution constante et de plus en plus de navigateurs les prennent en charge, il est donc important de suivre les dernières tendances pour pouvoir en tirer le meilleur parti.</p>
+</div>
+<footer class=content__footer></footer>
+</section>
+<section class=page__aside>
+<div class=aside__about>
+<div class=aside__about>
+<h1 class=about__title>Qui suis-je ?</h1>
+<p class=about__description>Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies</p>
+</div>
+<ul class=aside__social-links>
+<li>
+<a href=https://github.com/Shammas44 rel=me aria-label=GitHub title=GitHub><i class="fa-brands fa-github" aria-hidden=true></i></a>&nbsp;
+</li>
+</ul>
+</div>
+<hr>
+<div class=aside__content>
+<p>
+By Sébastien Traber,
+2023-01-27
+</p>
+</div>
+</section>
+<footer class=page__footer><p>
+</p>
+<br><br>
+<p class=copyright>© 2023 <a href=https://sebastientraber.com>Sébastien Traber</a></p>
+<p class=advertisement>Powered by <a href=https://gohugo.io/>hugo</a> and <a href=https://github.com/joeroe/risotto>risotto</a>.</p>
+</footer>
+</div>
+</body>
+</html>

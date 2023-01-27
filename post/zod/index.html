@@ -1,0 +1,96 @@
+<!doctype html><html lang=fr>
+<head><title>Validation de données en JavaScript avec Zod &ndash; Sébastien Traber</title>
+<meta name=description content="Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta charset=utf-8>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.1/css/academicons.min.css integrity="sha512-b1ASx0WHgVFL5ZQhTgiPWX+68KjS38Jk87jg7pe+qC7q9YkEtFq0z7xCglv7qGIs/68d3mAp+StfC8WKC5SSAg==" crossorigin=anonymous>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/palettes/base16-dark.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/risotto.css>
+<link rel=stylesheet href=https://shammas44.github.io/labveilltech/css/custom.css>
+</head>
+<body>
+<div class=page>
+<header class=page__header><h1 class=page__logo><a href=https://shammas44.github.io/labveilltech/ class=page__logo-inner>Sébastien Traber</a></h1>
+<nav class="page__nav main-nav">
+<ul>
+<li class=main-nav__item><a class="nav-main-item active" href=https://shammas44.github.io/labveilltech/post/ title=Posts>Posts</a></li>
+</ul>
+</nav>
+</header>
+<section class=page__body>
+<header class=content__header>
+<h1>Validation de données en JavaScript avec Zod</h1>
+</header>
+<div class=content__body>
+<p>Grâce à l&rsquo;un de mes abonnements YouTube, en l&rsquo;occurrence le youtubeur <a href="https://www.youtube.com/watch?v=9UVPk0Ulm6U">Web Dev Simplified</a> j&rsquo;ai découvert une librairie JavaScript très utile</p>
+<p>que je pourrais être susceptible d&rsquo;utiliser dans un de mes projets pour la validation de données des formulaires.</p>
+<p>Zod est une librairie JavaScript open source pour la validation de données. Il permet de définir des schémas de validation pour vos objets JavaScript et de vérifier si des objets donnés respectent ces schémas. Cela peut être utile pour vous assurer que les données d&rsquo;entrée d&rsquo;une API ou d&rsquo;une application respectent les attentes de votre application.</p>
+<h2 id=installation>Installation</h2>
+<p>Pour installer Zod, vous pouvez utiliser npm ou yarn :</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>npm install zod
+</code></pre></div><p>ou</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>yarn add zod
+</code></pre></div><h2 id=utilisation>Utilisation</h2>
+<p>Voici un exemple d&rsquo;utilisation de Zod pour valider un objet contenant un nom et un âge :</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>z</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>require</span>(<span style=color:#e6db74>&#39;zod&#39;</span>);
+
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>schema</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>z</span>.<span style=color:#a6e22e>object</span>({
+  <span style=color:#a6e22e>name</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>z</span>.<span style=color:#a6e22e>string</span>().<span style=color:#a6e22e>nonempty</span>(),
+  <span style=color:#a6e22e>age</span><span style=color:#f92672>:</span> <span style=color:#a6e22e>z</span>.<span style=color:#a6e22e>number</span>().<span style=color:#a6e22e>positive</span>()
+});
+
+<span style=color:#66d9ef>const</span> <span style=color:#a6e22e>data</span> <span style=color:#f92672>=</span> { <span style=color:#a6e22e>name</span><span style=color:#f92672>:</span> <span style=color:#e6db74>&#39;John&#39;</span>, <span style=color:#a6e22e>age</span><span style=color:#f92672>:</span> <span style=color:#ae81ff>30</span> };
+
+<span style=color:#66d9ef>try</span> {
+  <span style=color:#a6e22e>schema</span>.<span style=color:#a6e22e>validate</span>(<span style=color:#a6e22e>data</span>);
+  <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>&#39;Validation réussie !&#39;</span>);
+} <span style=color:#66d9ef>catch</span> (<span style=color:#a6e22e>err</span>) {
+  <span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#a6e22e>err</span>.<span style=color:#a6e22e>message</span>);
+}
+</code></pre></div><p>Dans cet exemple, nous avons défini un schéma qui attend un objet avec une propriété <code>name</code> qui est une chaîne de caractères non vide et une propriété <code>age</code> qui est un nombre positif. Nous avons ensuite utilisé ce schéma pour valider un objet avec les valeurs <code>name: 'John', age: 30</code>. Si l&rsquo;objet respecte le schéma, la validation réussit et un message est imprimé. Sinon, une erreur est levée et le message d&rsquo;erreur est imprimé.</p>
+<h2 id=types-de-données-pris-en-charge>Types de données pris en charge</h2>
+<p>Zod prend en charge les types de données suivants :</p>
+<ul>
+<li>number</li>
+<li>string</li>
+<li>boolean</li>
+<li>object</li>
+<li>array</li>
+<li>date</li>
+</ul>
+<p>Il fournit également des validateurs pour vérifier si un nombre est positif ou négatif, si une chaîne de caractères est vide ou non, etc.</p>
+<h2 id=conclusion>Conclusion</h2>
+<p>Zod est un outil pratique pour valider les données d&rsquo;entrée de votre application. Il permet de définir des schémas de validation clairs et de vérifier facilement si des objets respectent ces schémas. Il est facile à installer et à utiliser, et prend en charge un grand nombre de types de données.</p>
+</div>
+<footer class=content__footer></footer>
+</section>
+<section class=page__aside>
+<div class=aside__about>
+<div class=aside__about>
+<h1 class=about__title>Qui suis-je ?</h1>
+<p class=about__description>Etudiant en ingénierie des médias, je suis passionné par le développement web et ses technologies</p>
+</div>
+<ul class=aside__social-links>
+<li>
+<a href=https://github.com/Shammas44 rel=me aria-label=GitHub title=GitHub><i class="fa-brands fa-github" aria-hidden=true></i></a>&nbsp;
+</li>
+</ul>
+</div>
+<hr>
+<div class=aside__content>
+<p>
+By Sébastien Traber,
+2023-01-27
+</p>
+</div>
+</section>
+<footer class=page__footer><p>
+</p>
+<br><br>
+<p class=copyright>© 2023 <a href=https://sebastientraber.com>Sébastien Traber</a></p>
+<p class=advertisement>Powered by <a href=https://gohugo.io/>hugo</a> and <a href=https://github.com/joeroe/risotto>risotto</a>.</p>
+</footer>
+</div>
+</body>
+</html>
