@@ -24,7 +24,7 @@ jobs:
           # extended: true
 
       - name: Build
-        working-directory: ./risotto/exampleSite
+        working-directory: ./
         run: hugo --minify --themesDir="../.." -t risotto
 
       - name: Deploy
@@ -32,5 +32,5 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./risotto/exampleSite/public
+          publish_dir: ./public
           cname: risotto.joeroe.io
